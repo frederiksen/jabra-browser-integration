@@ -38,7 +38,7 @@ public:
   lock(std::mutex &m)
     : m_(m)
   {
-    m.lock();
+    m_.lock();
   }
 
   ~lock()

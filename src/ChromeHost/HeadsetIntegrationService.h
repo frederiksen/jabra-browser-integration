@@ -79,4 +79,9 @@ protected:
   static void StaticJabraDeviceAttachedFunc(Jabra_DeviceInfo deviceInfo);
   static void StaticJabraDeviceRemovedFunc(unsigned short deviceID);
   static void StaticButtonInDataTranslatedFunc(unsigned short deviceID, Jabra_HidInput translatedInData, bool buttonInData);
+
+  typedef unsigned char BYTE;
+
+  std::string base64_encode(BYTE const* buf, unsigned int bufLen);
+  //std::vector<BYTE> base64_decode(std::string const&);
 };

@@ -7,7 +7,7 @@
     "128": "icon128.png"
   },
   "version": "0.5.0",
-  "description": "Jabra Integration Extension",
+  "description": "Jabra Browser Integration Extension",
   "content_scripts": [
     {
       "js": [ "content-script.js" ],
@@ -18,7 +18,12 @@
   "background": {
     "scripts": [ "background.js" ]
   },
-  "permissions": [
-    "nativeMessaging"
-  ]
+  "browser_action": {
+    "default_icon": "icon16.png",
+    "default_popup": "popup.html",
+    "default_title": "Jabra Browser Integration Extension",
+    "scripts": [ "popup-scripts.js" ]
+  },
+  "web_accessible_resources": [ "jabra-logo.png" ],
+  "permissions": [ "nativeMessaging" ]
 }
