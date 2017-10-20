@@ -156,19 +156,9 @@ std::string HeadsetIntegrationService::GetDevicesAsString()
       devicesAsString += ",";
     }
 
-    // Battery information
-    int levelInPercent;
-    bool charging;
-    bool batteryLow;
-    Jabra_ReturnCode r = Jabra_GetBatteryStatus(
-      m_devices[i].deviceID,
-      &levelInPercent,
-      &charging,
-      &batteryLow
-    );
 
+    // Image
     std::string test;
-
     const char *imageFilePath = Jabra_GetDeviceImageThumbnailPath(m_devices[i].deviceID);
     if (imageFilePath != NULL && strlen(imageFilePath) > 0)
     {
@@ -185,43 +175,7 @@ std::string HeadsetIntegrationService::GetDevicesAsString()
       Jabra_FreeString((char *)imageFilePath);
     }
 
-    //    std::ofstream imageFile;
-    //    imageFile.open(imageFilePath, std::ios::out | std::ios::binary);
-    //    std::string fileContent;
-    //    fileContent << imageFile;
-
-
-    //std::string test = "abc";
-    //std::string test = base64_encode(data, contentsSize);
-
-    //    const unsigned char *test1;
-    //  unsigned int test2;
-    //base64_encode(test1, test2);
-    //base64_encode();
-
-    //std::string test = base64_encode(test1, test2);
-
-
-
-
-    //  std::streamsize size = t.tellg();
-
-    //    t.read(buffer, BUFFERSIZE);
-
-    //    std::string str((std::istreambuf_iterator<char>(t)),
-    //      std::istreambuf_iterator<char>());
-
-
-    //std::string test = "abc"; // base64_encode(&contents[0], contents.size());
-
-    //std::string test = base64::decode(str);
-
-    //std::string test = base64::encode("YW55IGNhcm5hbCBwbGVhc3VyZQ==");
-    //    std::string test = base64::encode("YW55IGNhcm5hbCBwbGVhc3VyZQ==");
-
-    //Jabra_FreeString();
-
-
+    // Serial
     std::string realSerialString = "?";
     char realSerial[255];
     if (Jabra_GetSerialNumber(m_devices[i].deviceID, realSerial, 255) == Return_Ok)
@@ -230,6 +184,7 @@ std::string HeadsetIntegrationService::GetDevicesAsString()
       realSerialString = tmp;
     }
 
+    // FW version
     std::string firmwareVersion = "?";
     char bufferTmp[255];
     if (Jabra_GetFirmwareVersion(m_devices[i].deviceID, bufferTmp, 255) == Return_Ok)
@@ -251,7 +206,27 @@ std::string HeadsetIntegrationService::GetDevicesAsString()
     devicesAsString += ",";
 
 
+    // Battery information
+    int levelInPercent;
+    bool charging;
+    bool batteryLow;
+    Jabra_ReturnCode r = Jabra_GetBatteryStatus(
+      m_devices[i].deviceID,
+      &levelInPercent,
+      &charging,
+      &batteryLow
+    );
 
+    if (r == Return_Ok)
+    {
+      devicesAsString += std::to_string(levelInPercent);
+      devicesAsString += "%";
+
+      if (charging)
+      {
+        devicesAsString += " charging";
+      }
+    }
     if (r == Not_Supported)
     {
       devicesAsString += "Not_Supported";
@@ -262,13 +237,7 @@ std::string HeadsetIntegrationService::GetDevicesAsString()
     }
     else
     {
-      devicesAsString += std::to_string(levelInPercent);
-      devicesAsString += "%";
-
-      if (charging)
-      {
-        devicesAsString += " charging";
-      }
+      devicesAsString += "???";
     }
   }
 
