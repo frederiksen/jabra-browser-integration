@@ -170,7 +170,7 @@ std::string HeadsetIntegrationService::GetDevicesAsString()
     std::string test;
 
     const char *imageFilePath = Jabra_GetDeviceImageThumbnailPath(m_devices[i].deviceID);
-    if (imageFilePath != NULL)
+    if (imageFilePath != NULL && strlen(imageFilePath) > 0)
     {
       const int BUFFERSIZE = 14096;
       char * buffer = new char[BUFFERSIZE];
