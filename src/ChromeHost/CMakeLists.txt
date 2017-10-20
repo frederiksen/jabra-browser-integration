@@ -1,30 +1,30 @@
-cmake_policy(SET CMP0015 NEW)
-
+cmake_minimum_required(VERSION 2.8)
 project (jabrachromehost)
-  
-file(GLOB_RECURSE sources *.cpp *.h *.hpp)
+
+file(GLOB sources *.cpp)
+
+include_directories(SDK)
 
 add_compile_options(-std=c++11)
+
 if(WIN32)
-  add_compile_options(/MT)
+  set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
+  set(CMAKE_CXX_FLAGS_RELEASE "/MT")
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-if(WIN32)
-  link_directories("./SDKWindows")
-endif()
-
-if(APPLE)
-  link_directories("./SDKmacOS")
-endif()
-
 add_executable(jabrachromehost ${sources})
 
-if(WIN32)
-  target_link_libraries(jabrachromehost PUBLIC libjabra)
+if(UNIX AND NOT APPLE)
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.so.1.0.11.1;.so.1;.so.2")
 endif()
 
-if(APPLE)
-  target_link_libraries(jabrachromehost PUBLIC jabra)
-endif()
+find_library(LIBJABRA
+             NAMES jabra libjabra
+             PATHS "${CMAKE_SOURCE_DIR}"
+             PATH_SUFFIXES "SDKmacOS"
+             PATH_SUFFIXES "SDKWindows"
+             PATH_SUFFIXES "SDKLinux/32-bit"
+             PATH_SUFFIXES "SDKLinux/64-bit")
+target_link_libraries(jabrachromehost PUBLIC ${LIBJABRA})
