@@ -47,7 +47,6 @@ SOFTWARE.
 #include "EventLineBusy.h"
 #include "EventReject.h"
 #include "EventFlash.h"
-#include "lock.h"
 #include "./SDK/JabraDeviceConfig.h"
 
 HeadsetIntegrationService* g_thisHeadsetIntegrationService;
@@ -92,7 +91,7 @@ HeadsetIntegrationService::~HeadsetIntegrationService()
 
 void HeadsetIntegrationService::SendCmd(std::string msg)
 {
-  lock lock(m_mtx);
+  std::lock_guard<std::mutex> lock(m_mtx);
 
   using Iter = std::vector<CmdInterface*>::const_iterator;
   for (Iter it = m_commands.begin(); it != m_commands.end(); ++it) {
@@ -308,7 +307,7 @@ bool HeadsetIntegrationService::GetRingerStatus(unsigned short id)
 
 void HeadsetIntegrationService::JabraDeviceAttachedFunc(Jabra_DeviceInfo deviceInfo)
 {
-  lock lock(m_mtx);
+  std::lock_guard<std::mutex> lock(m_mtx);
 
   m_devices.push_back(deviceInfo);
   std::string deviceName(deviceInfo.deviceName);
@@ -317,7 +316,7 @@ void HeadsetIntegrationService::JabraDeviceAttachedFunc(Jabra_DeviceInfo deviceI
 
 void HeadsetIntegrationService::JabraDeviceRemovedFunc(unsigned short deviceID)
 {
-  lock lock(m_mtx);
+  std::lock_guard<std::mutex> lock(m_mtx);
 
   int index = -1;
 
@@ -345,7 +344,7 @@ void HeadsetIntegrationService::JabraDeviceRemovedFunc(unsigned short deviceID)
 
 void HeadsetIntegrationService::ButtonInDataTranslatedFunc(unsigned short deviceID, Jabra_HidInput translatedInData, bool buttonInData)
 {
-  lock lock(m_mtx);
+  std::lock_guard<std::mutex> lock(m_mtx);
 
   // Only handle input data from current device
   if (deviceID != GetCurrentDeviceId())
